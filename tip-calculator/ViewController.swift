@@ -14,8 +14,14 @@ class ViewController: UIViewController {
     @IBOutlet weak var tipControl: UISegmentedControl!
     @IBOutlet weak var totalLabel: UILabel!
     
+    let currencyFormatter = NumberFormatter()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Configure currencyFormatter
+        currencyFormatter.usesGroupingSeparator = true
+        currencyFormatter.numberStyle = .currency
+        currencyFormatter.locale = Locale.current
         // Do any additional setup after loading the view.
         self.title = "Tip Calculator"
         // Add listener to bill TextField to update total on edit
@@ -43,20 +49,14 @@ class ViewController: UIViewController {
 
     @IBAction func calculateTip(_ sender: Any) {
         let bill = Double(billAmountTextField.text!) ?? 0
-        
         let tipPercentages = [0.15, 0.18, 0.2]
         let segmentIndex = tipControl.selectedSegmentIndex
         let tip: Double = bill * tipPercentages[segmentIndex]
         let total: Double = bill + tip
         
-        UserDefaults.standard.set(bill, forKey: "billAmt")
+        UserDefaults.standard.set(billAmountTextField.text, forKey: "billAmt")
         UserDefaults.standard.set(segmentIndex, forKey: "segmentIndex")
         UserDefaults.standard.set(NSDate(), forKey: "datetime")
-        
-        let currencyFormatter = NumberFormatter()
-        currencyFormatter.usesGroupingSeparator = true
-        currencyFormatter.numberStyle = .currency
-        currencyFormatter.locale = Locale.current
         
         tipAmountLabel.text = currencyFormatter.string(from: tip as NSNumber)
         totalLabel.text = currencyFormatter.string(from: total as NSNumber)
